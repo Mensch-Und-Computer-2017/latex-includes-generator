@@ -1,0 +1,17 @@
+{
+  "name": "latex-includes-generator",
+  "version": ".0.1",
+  "description": "",
+  "main": "generate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "chmod +x generate.js"
+  },
+  "author": "Alexander Bazo <alexanderbazo@googlemail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.11.0",
+    "mkdirp": "^0.5.1",
+    "xml2js": "^0.4.17"
+  }
+}
