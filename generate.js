@@ -8,6 +8,7 @@ const fs = require('fs'),
   mkdirp = require('mkdirp'),
   NEW_LINE_CHAR = '\n',
   AUTHOR_CONCAT_SYMBOL = ' & ',
+  UNSORTED_PAPER_SESSION = 'No-Session',
   CSV_FILE_NAME_TEMPLATE = '{{directory}}/{{name}}.csv',
   CSV_HEADER = 'ID|path|title|authors|doi|track',
   CSV_LINE_TEMPLATE = '{{ID}}|{{PATH}}|{{TITLE}}|{{AUTHORS}}|{{DOI}}|{{TRACK}}';
@@ -51,7 +52,7 @@ function createCSVStringFromSession(session) {
   for (let i = 0; i < session.length; i++) {
     let paper = session[i],
       authors = concatAuthors(paper.authors.author),
-      line = CSV_LINE_TEMPLATE.replace('{{ID}}', paper.id).replace('{{PATH}}', 'path').replace('{{TITLE}}', paper.title).replace('{{AUTHORS}}', authors).replace('{{DOI}}', paper.doi).replace('{{TRACK}}', paper.session.shortTitle);
+      line = CSV_LINE_TEMPLATE.replace('{{ID}}', paper.id).replace('{{PATH}}', paper.pathInProceedings).replace('{{TITLE}}', paper.title).replace('{{AUTHORS}}', authors).replace('{{DOI}}', paper.doi).replace('{{TRACK}}', paper.session.shortTitle);
     csvData += NEW_LINE_CHAR + line;
   }
   return csvData;
@@ -93,9 +94,12 @@ function sortPapersInSession(sessions) {
   return sessions;
 }
 
-function addPaperToSessions(sessions, paper) {
-  if (paper.session.shortTitle === '') {
+function addPaperToSessions(sessions, paper) { 
+  if(paper.isAccepted === 'false') {
     return sessions;
+  }
+  if (paper.session.shortTitle === '') {
+    paper.session.shortTitle = UNSORTED_PAPER_SESSION;
   }
   if (!sessions[paper.session.shortTitle]) {
     sessions[paper.session.shortTitle] = [];
