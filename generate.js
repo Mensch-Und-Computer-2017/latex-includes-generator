@@ -64,7 +64,8 @@ function generateSessionLists(sessions) {
   return new Promise(function(resolve) {
     for (let key in sessions) {
       if (sessions.hasOwnProperty(key)) {
-        lists[key] = createCSVStringFromSession(sessions[key]);
+        let sessionKey = key.split(' ')[0];
+        lists[sessionKey] = createCSVStringFromSession(sessions[key]);
       }
     }
     resolve(lists);
