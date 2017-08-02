@@ -3,6 +3,7 @@ node_modules
 
 # output
 lists
+out
 
 # input
 submissions.xml

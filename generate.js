@@ -86,16 +86,18 @@ function sortPapersInSession(sessions) {
   log('Sorting papers in sessions');
   for (let key in sessions) {
     if (sessions.hasOwnProperty(key)) {
-      sessions[key] = sessions[key].sort(function(a) {
-        return a.positionInSession;
+      sessions[key] = sessions[key].sort(function(a, b) {
+        let idPaperA = parseInt(a.positionInSession),
+          idPaperB = parseInt(b.positionInSession);
+        return idPaperA - idPaperB;
       });
     }
   }
   return sessions;
 }
 
-function addPaperToSessions(sessions, paper) { 
-  if(paper.isAccepted === 'false') {
+function addPaperToSessions(sessions, paper) {
+  if (paper.isAccepted === 'false') {
     return sessions;
   }
   if (paper.session.shortTitle === '') {
