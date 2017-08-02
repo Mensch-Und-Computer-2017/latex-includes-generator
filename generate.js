@@ -18,6 +18,7 @@ var program = require('commander');
 program
   .version('0.0.1')
   .option('-i, --input [value]', 'Input file', './submissions.xml')
+  .option('-s, --singlefile [value]', 'Generate single output file instead of multiple session based files')
   .option('-o, --output [value]', 'Output directory', './out')
   .parse(process.argv);
 
@@ -25,14 +26,35 @@ function log(msg) {
   console.log(msg); // eslint-disable-line
 }
 
+function printSessiontToSingleFile(outputFile, sessionList) {
+  let content = CSV_HEADER + NEW_LINE_CHAR;
+  for (let key in sessionList) {
+    if (sessionList.hasOwnProperty(key)) {
+      let lines = sessionList[key].split('\n');
+      lines.shift();
+      content += lines.join('\n') + NEW_LINE_CHAR;
+    }
+  }
+  log('Writing file: ' + outputFile);
+  fs.writeFileSync(outputFile, content);
+}
+
 function printSessionListsToFiles(outputDirectory, sessionList) {
   for (let key in sessionList) {
     if (sessionList.hasOwnProperty(key)) {
       let file = CSV_FILE_NAME_TEMPLATE.replace('{{directory}}', outputDirectory).replace('{{name}}', key);
-      mkdirp.sync(outputDirectory);
+      mkdirp.sync(outputDirectory); 
       log('Writing file: ' + file);
       fs.writeFileSync(file, sessionList[key]);
     }
+  }
+}
+
+function printSessionList(output, singlefile, sessionList) {
+  if (singlefile) {
+    printSessiontToSingleFile(output, sessionList);
+  } else {
+    printSessionListsToFiles(output, sessionList);
   }
 }
 
@@ -146,7 +168,7 @@ function loadData(file) {
 
 function run() {
   log('Generating include list for latex workflow');
-  loadData(program.input).then(groupSessions).then(generateSessionLists).then(printSessionListsToFiles.bind(this, program.output));
+  loadData(program.input).then(groupSessions).then(generateSessionLists).then(printSessionList.bind(this, program.output, program.singlefile));
 }
 
 run();
